@@ -3,11 +3,9 @@
 #include <string.h>
 #include "memoryBlock.h"
 
-
-struct memory{
+struct memory
+{
 
     memoryBlock *memoryArray;
     int memorySize;
-
 };
-
