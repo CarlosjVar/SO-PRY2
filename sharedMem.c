@@ -11,11 +11,11 @@
 #define IPC_RESULT_ERROR (-1)
 
 
-static int get_shared_memory(char *filename, int size, int space){
+static int get_shared_memory(char *filename, int size){
 
     key_t key;
 
-    key = ftok(filename, space);
+    key = ftok(filename, 0);
     if(key == IPC_RESULT_ERROR){
         printf("La llave no se pudo conseguir con exito\n");
         return IPC_RESULT_ERROR;
@@ -25,9 +25,9 @@ static int get_shared_memory(char *filename, int size, int space){
 
 }
 
-char * attach_memory_block(char *filename, int size, int space){
+char * attach_memory_block(char *filename, int size){
 
-    int memblock = get_shared_memory(filename, size, space);
+    int memblock = get_shared_memory(filename, size);
     char *result;
 
     if(memblock == IPC_RESULT_ERROR){
