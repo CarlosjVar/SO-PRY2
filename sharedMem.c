@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "program_factory.h"
 #include <string.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
@@ -11,6 +12,20 @@
 #define IPC_RESULT_ERROR (-1)
 
 int get_shared_memory(char *filename, int size)
+{
+    key_t key;
+
+    key = ftok(filename, 0);
+    if (key == IPC_RESULT_ERROR)
+    {
+        printf("La llave no se pudo conseguir con exito\n");
+        return IPC_RESULT_ERROR;
+    }
+
+    return shmget(key, size, 0644);
+}
+
+int create_shared_memory(char *filename, int size)
 {
 
     key_t key;

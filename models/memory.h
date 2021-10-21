@@ -6,6 +6,6 @@
 struct memory
 {
 
-    memoryBlock *memoryArray;
+    struct memoryBlock *memoryArray;
     int memorySize;
 };

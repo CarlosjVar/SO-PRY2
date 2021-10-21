@@ -1,3 +1,6 @@
+#ifndef MEMORY_BLOCK_H
+#define MEMORY_BLOCK_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,3 +15,4 @@ struct memoryBlock
     int status;
     int pSize;
 };
+#endif
