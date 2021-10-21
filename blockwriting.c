@@ -19,7 +19,7 @@ int writeInBlock()
         return -1;
     }
     printf("Escribiendo: \"%s\"\n", ch);
-    strncpy(bloque, &ch, BLOCK_SIZE);
+    strncpy(bloque, "asdasd", BLOCK_SIZE);
 
     detach_memory_block(bloque);
 

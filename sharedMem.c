@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "program_factory.h"
 #include <string.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
@@ -22,7 +21,7 @@ int get_shared_memory(char *filename, int size)
         return IPC_RESULT_ERROR;
     }
 
-    return shmget(key, size, 0644);
+    return shmget(key, size, 0644 | IPC_CREAT);
 }
 
 int create_shared_memory(char *filename, int size)
