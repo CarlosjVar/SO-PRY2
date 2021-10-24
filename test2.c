@@ -24,7 +24,7 @@ int main(int argc, char const *argv[])
 
     for (int i = 0; i < 10; i++)
     {
-        printf("El  bloque tiene PID %d Size %d status %d \n", baseBlock[i].PID, baseBlock[i].status);
+        printf("El  bloque tiene PID %d  status %d  \n", baseBlock[i].PID, baseBlock[i].status);
     }
     return 0;
 }

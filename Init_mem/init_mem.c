@@ -1,5 +1,4 @@
 #include "../sharedMem.h"
-#include "../models/memory.h"
 #include "../models/memoryBlock.h"
 #include <stdio.h>
 #include <stdio.h>
