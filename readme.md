@@ -2,12 +2,12 @@
 Todos estos comandos son ejecutados desde el root (/SO-PRY2)
 ## Programa inicializador
 ```
-gcc ./init_mem/init_mem.c sharedMem.c -o init
+gcc ./init_mem/init_mem.c  sharedMem.c -o output/init
 ```
 
 ## Programa finalizador
 
 ```
-gcc ./dealloc_mem/dealloc_mem.c sharedMem.c -o dealloc
+gcc ./dealloc_mem/dealloc_mem.c sharedMem.c -o output/dealloc
 ```
 

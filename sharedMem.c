@@ -21,7 +21,7 @@ int get_shared_memory(char *filename, int size)
         return IPC_RESULT_ERROR;
     }
 
-    return shmget(key, size, 0644 | IPC_CREAT);
+    return shmget(key, size, 0644);
 }
 
 int create_shared_memory(char *filename, int size)
@@ -36,30 +36,50 @@ int create_shared_memory(char *filename, int size)
         return IPC_RESULT_ERROR;
     }
 
-    return shmget(key, size, 0644 | IPC_CREAT);
+    return shmget(key, size, 0666 | IPC_CREAT);
 }
 
-char *attach_memory_block(char *filename, int size)
+struct memoryBlock *create_memory_block(char *filename, int size)
 {
 
-    int memblock = get_shared_memory(filename, size);
-    char *result;
+    printf("Llega aquí");
+    int memblock = create_shared_memory(filename, size);
 
     if (memblock == IPC_RESULT_ERROR)
     {
         printf("No se pudo encontrar la llave para el bloque\n");
         return NULL;
     }
+    struct memoryBlock *baseBlock;
+    baseBlock = (struct memoryBlock *)shmat(memblock, 0, 0);
 
-    result = shmat(memblock, NULL, 0);
-
-    if (result == (char *)IPC_RESULT_ERROR)
+    if (baseBlock == (struct memoryBlock *)IPC_RESULT_ERROR)
     {
         printf("No se pudo reservar el espacio\n");
         return NULL;
     }
 
-    return result;
+    return baseBlock;
+}
+struct memoryBlock *attach_memory_block(char *filename, int size)
+{
+    int memblock = get_shared_memory(filename, size);
+
+    if (memblock == IPC_RESULT_ERROR)
+    {
+        printf("No se pudo encontrar la llave para el bloque\n");
+        return NULL;
+    }
+    struct memoryBlock *baseBlock;
+    baseBlock = (struct memoryBlock *)shmat(memblock, 0, 0);
+
+    if (baseBlock == (struct memoryBlock *)IPC_RESULT_ERROR)
+    {
+        perror("schmat error");
+        exit(1);
+    }
+
+    return baseBlock;
 }
 
 bool detach_memory_block(char *block)
