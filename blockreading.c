@@ -3,11 +3,13 @@
 #include <string.h>
 #include "sharedMem.h"
 
-int readBlock(){
+int readBlock()
+{
 
     char *bloque = attach_memory_block(FILENAME, BLOCK_SIZE);
 
-    if(bloque == NULL){
+    if (bloque == NULL)
+    {
         printf("Imposible conseguir el bloque\n");
         return -1;
     }
@@ -19,5 +21,10 @@ int readBlock(){
     printf("Fin de la lectura\n\n");
 
     return 0;
+}
 
+int main(int argc, char const *argv[])
+{
+    readBlock();
+    return 0;
 }

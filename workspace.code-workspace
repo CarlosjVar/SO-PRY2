@@ -1,0 +1,13 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "files.associations": {
+            "memory.h": "c",
+            "memoryblock.h": "c"
+        }
+    }
+}
