@@ -28,9 +28,9 @@ void startMemory()
         exit(1);
     }
     baseBlock[0].PID = 2;
-    baseBlock[0].status = 1;
+    baseBlock[0].status = 0;
     baseBlock[1].PID = 1;
-    baseBlock[1].status = 2;
+    baseBlock[1].status = 0;
     baseBlock[2].PID = 24;
     baseBlock[2].status = 1;
     shmdt((void *)baseBlock);

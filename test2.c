@@ -8,34 +8,33 @@
 #define FILENAME "memblock.c"
 
 
-void insert_process(int init,int p_size)
+void insert_process( int init,int p_size, struct memoryBlock * blockList)
 {
-    int array[] = {1,0,1,1,0,0,0,1,1,0};
     while (p_size>0)
     {
-        array[init++]=1;
+        blockList[init++].status =1;
         p_size--;
     }
     for (int i = 0; i < 10; i++)
     {
-        printf("El  bloque tiene PID %d  status %d  \n", i, array[i]);
+        printf("El  bloque tiene PID %d  status %d  \n", i, blockList[i].status);
     }
 
 }
 
 
-void first_fit(int p_size)
+void first_fit(struct memoryBlock * blockList, int p_size)
 {
-    int array[] = {1,0,0,1,0,0,0,1,1,0};
+
     int size = 0;
     for (int i = 0; i < 10; i++)
     {
 
-        if(array[i] == 0){
+        if(blockList[i].status  == 0){
             size += 1;
             if(size >= p_size)
             {
-                insert_process( i-p_size+1, p_size);
+                insert_process( i-p_size+1, p_size, blockList);
                 break;
             }
             continue;
@@ -46,20 +45,19 @@ void first_fit(int p_size)
 
 }
 
-void best_fit(int p_size)
+void best_fit(struct memoryBlock * blockList, int p_size)
 {
-    int array[] = {1,0,1,1,0,0,0,1,1,0};
     int size = 0;
     int index = 0;
     int actual_space[] ={0,0};
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 10; i++) //bastante segura que hay que cambiar el tamaño
     {
-        if(array[i] == 0){
+        if(blockList[i].status == 0){
             if(size == 0)
                 index=i;
             size += 1;
         }
-        if(size > 0 && (array[i] == 1 || i == 9 )){
+        if(size > 0 && (blockList[i].status != 0 || i == 9 )){ //aqui tambien
             if(size>= p_size && (size<actual_space[1] || actual_space[1]==0)){
                 actual_space[0] = index;
                 actual_space[1] = size;
@@ -68,23 +66,23 @@ void best_fit(int p_size)
         }
     }
     if(actual_space[1]>=p_size)
-        insert_process(actual_space[0], actual_space[1]);
+        insert_process(actual_space[0], p_size, blockList);
 }
 
-void worst_fit(int p_size)
+void worst_fit(struct memoryBlock * blockList, int p_size)
 {
-    int array[] = {1,0,1,1,0,0,0,1,1,0};
+    
     int size = 0;
     int index = 0;
-    int actual_space[] ={0,0};
-    for (int i = 0; i < 10; i++)
+    int actual_space[] = {0,0};
+    for (int i = 0; i < 10; i++) //bastante segura que hay que cambiar el tamaño
     {
-        if(array[i] == 0){
+        if(blockList[i].status == 0){
             if(size == 0)
                 index=i;
             size += 1;
         }
-        if(size > 0 && (array[i] == 1 || i == 9 )){
+        if(size > 0 && (blockList[i].status != 0 || i == 9 )){ //aqui tambien
             if(size>= p_size && (size>actual_space[1] || actual_space[1]==0)){
                 actual_space[0] = index;
                 actual_space[1] = size;
@@ -93,7 +91,7 @@ void worst_fit(int p_size)
         }
     }
     if(actual_space[1]>=p_size)
-        insert_process(actual_space[0], actual_space[1]);
+        insert_process(actual_space[0], p_size, blockList);
 }
 
 
@@ -113,9 +111,11 @@ int main(int argc, char const *argv[])
         perror("schmat error");
         exit(1);
     }
-
-    worst_fit(1);
-     
-    
+    for (int i = 0; i < 10; i++)
+    {
+        printf("El  bloque tiene PID %d  status %d  \n", i, blockList[i].status);
+    }
+    printf("---------------------------------------\n");
+    first_fit(blockList, 1);
 
 }
