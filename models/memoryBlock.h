@@ -13,6 +13,5 @@ struct memoryBlock
 
     int PID;
     int status;
-    int pSize;
 };
 #endif
