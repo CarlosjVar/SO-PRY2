@@ -39,6 +39,40 @@ int create_shared_memory(char *filename, int size)
     return shmget(key, size, 0666 | IPC_CREAT);
 }
 
+int create_array_size(char *filename, int size)
+{
+    key_t key;
+
+    key = ftok(filename, 1);
+    if (key == IPC_RESULT_ERROR)
+    {
+        printf("La llave no se pudo conseguir con exito\n");
+        return IPC_RESULT_ERROR;
+    }
+
+    return shmget(key, size, 0666 | IPC_CREAT);
+}
+
+int *get_array_size(char *filename, int size){
+    int memblock = create_array_size(filename, size);
+
+    if (memblock == IPC_RESULT_ERROR)
+    {
+        printf("No se pudo encontrar la llave para el bloque\n");
+        return NULL;
+    }
+
+    int *arraySize;
+    arraySize = (int *)shmat(memblock, 0, 0);
+
+    if (arraySize == (int *)IPC_RESULT_ERROR)
+    {
+        perror("schmat error");
+        exit(1);
+    }
+    return arraySize;
+}
+
 struct memoryBlock *create_memory_block(char *filename, int size)
 {
 
@@ -61,6 +95,7 @@ struct memoryBlock *create_memory_block(char *filename, int size)
 
     return baseBlock;
 }
+
 struct memoryBlock *attach_memory_block(char *filename, int size)
 {
     int memblock = get_shared_memory(filename, size);
@@ -78,7 +113,6 @@ struct memoryBlock *attach_memory_block(char *filename, int size)
         perror("schmat error");
         exit(1);
     }
-
     return baseBlock;
 }
 
@@ -99,6 +133,8 @@ bool destroy_memory_block(char *filename)
     }
     return (shmctl(memblock, IPC_RMID, NULL) != IPC_RESULT_ERROR);
 }
+
+
 
 //  int main(int argc, char *argv[]) {
 

@@ -5,6 +5,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include "./models/memoryBlock.h"
+#include "sharedMem.h"
 #define FILENAME "memblock.c"
 
 
@@ -99,18 +100,20 @@ void worst_fit(struct memoryBlock * blockList, int p_size)
 int main(int argc, char const *argv[])
 {
 
-    struct memoryBlock * blockList;
-    int requiredBlockSize = 10 * sizeof(*blockList);
-    int shmid;
-    
-    shmid = get_shared_memory(FILENAME, requiredBlockSize);
+    struct memoryBlock *baseBlock;
+    int *arraySize;
+    arraySize = get_array_size(FILENAME, sizeof(int));
+    int requiredBlockSize = arraySize[0]* sizeof(baseBlock);
 
-    blockList = (struct memoryBlock *)shmat(shmid, 0, 0);
-    if (blockList == (void *)-1)
+    baseBlock = attach_memory_block(FILENAME, requiredBlockSize);
+
+    baseBlock = (struct memoryBlock *)shmat(shmid, 0, 0);
+    if (baseBlock == (void *)-1)
     {
         perror("schmat error");
         exit(1);
     }
+
     for (int i = 0; i < 10; i++)
     {
         printf("El  bloque tiene PID %d  status %d  \n", i, blockList[i].status);
