@@ -5,26 +5,30 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include "./models/memoryBlock.h"
+#include "sharedMem.h"
 #define FILENAME "memblock.c"
 int main(int argc, char const *argv[])
 {
 
     struct memoryBlock *baseBlock;
-    int requiredBlockSize = 10 * sizeof(*baseBlock);
-    int shmid;
+    int arraySize = getArraySize(FILENAME);
+    int requiredBlockSize = arraySize * sizeof(*baseBlock);
+    baseBlock = attach_memory_block(FILENAME, requiredBlockSize);
+    // int shmid;
 
-    shmid = get_shared_memory(FILENAME, requiredBlockSize);
+    // shmid = get_shared_memory(FILENAME, requiredBlockSize);
 
-    baseBlock = (struct memoryBlock *)shmat(shmid, 0, 0);
-    if (baseBlock == (void *)-1)
-    {
-        perror("schmat error");
-        exit(1);
-    }
+    // baseBlock = (struct memoryBlock *)shmat(shmid, 0, 0);
+    // if (baseBlock == (void *)-1)
+    // {
+    //     perror("schmat error");
+    //     exit(1);
+    // }
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < arraySize; i++)
     {
         printf("El  bloque tiene PID %d  status %d  \n", baseBlock[i].PID, baseBlock[i].status);
     }
+    detach_memory_block(baseBlock);
     return 0;
 }

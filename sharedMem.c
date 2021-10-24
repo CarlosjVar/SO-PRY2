@@ -82,7 +82,7 @@ struct memoryBlock *attach_memory_block(char *filename, int size)
     return baseBlock;
 }
 
-bool detach_memory_block(char *block)
+bool detach_memory_block(struct memoryBlock *block)
 {
     return (shmdt(block) != IPC_RESULT_ERROR);
 }
@@ -100,47 +100,38 @@ bool destroy_memory_block(char *filename)
     return (shmctl(memblock, IPC_RMID, NULL) != IPC_RESULT_ERROR);
 }
 
-//  int main(int argc, char *argv[]) {
+int *setArraySize(char *filename, int *size)
+{
+    key_t key;
 
-//     // if(argc != 2){
-//     //     printf("usage - %s [stuff to write]", argv[0]);
-//     // }
+    key = ftok(filename, 1);
+    if (key == IPC_RESULT_ERROR)
+    {
+        printf("La llave no se pudo conseguir con exito\n");
+        return IPC_RESULT_ERROR;
+    }
+    int memblock = shmget(key, sizeof(int), 0666 | IPC_CREAT);
+    int sharedSize;
+    sharedSize = (int *)shmat(memblock, 0, 0);
+    sharedSize = size;
+    shmdt(sharedSize);
+    return size;
+}
 
-//     // char *bloque = attach_memory_block(FILENAME, BLOCK_SIZE);
+int *getArraySize(char *filename)
+{
+    key_t key;
 
-//     // if(bloque == NULL){
-//     //     printf("Imposible conseguir el bloque\n");
-//     //     return -1;
-//     // }
-//     // printf("Escribiendo: \"%s\"\n", argv[1]);
-//     // strncpy(bloque,argv[1],BLOCK_SIZE);
+    key = ftok(filename, 1);
+    if (key == IPC_RESULT_ERROR)
+    {
+        printf("La llave no se pudo conseguir con exito\n");
+        return IPC_RESULT_ERROR;
+    }
+    int *memblock = shmget(key, sizeof(int), 0666);
+    int *sharedSize;
+    sharedSize = (int *)shmat(memblock, 0, 0);
 
-//     // detach_memory_block(bloque);
-
-//     // printf("Fin de la escritura\n\n");
-
-//     // return 0;
-
-// ///////////////////////////////////////////////////////
-
-//     if(argc != 1){
-//         printf("usage - %s // no args", argv[0]);
-//         return -1;
-//     }
-
-//     char *bloque = attach_memory_block(FILENAME, BLOCK_SIZE);
-
-//     if(bloque == NULL){
-//         printf("Imposible conseguir el bloque\n");
-//         return -1;
-//     }
-
-//     printf("Leyendo: \"%s\"\n", bloque);
-
-//     detach_memory_block(bloque);
-
-//     printf("Fin de la lectura\n\n");
-
-//     return 0;
-
-// }
+    shmdt(sharedSize);
+    return sharedSize;
+}

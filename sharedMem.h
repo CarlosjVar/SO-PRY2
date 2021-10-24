@@ -9,7 +9,7 @@ int get_shared_memory(char *filename, int size);
 struct memoryBlock *create_memory_block(char *filename, int size);
 // Gives error if shared memory doesn't exists
 struct memoryBlock *attach_memory_block(char *filename, int size);
-bool detach_memory_block(char *block);
+bool detach_memory_block(struct memoryBlock *block);
 bool destroy_memory_block(char *filename);
 
 #define BLOCK_SIZE 4096

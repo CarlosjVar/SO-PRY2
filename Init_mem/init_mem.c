@@ -12,12 +12,11 @@ void startMemory()
 {
     struct memoryBlock *baseBlock;
     printf("Ingrese la cantidad de espacios de memoria que desea reservar \n");
-    int n;
-    scanf("%d", &n);
-    int requiredBlockSize = n * sizeof(*baseBlock);
+    int arraySize;
+    scanf("%d", &arraySize);
+    int requiredBlockSize = arraySize * sizeof(*baseBlock);
 
     int shmid;
-
     // Our program
     baseBlock = create_memory_block(FILENAME, requiredBlockSize);
 
@@ -27,13 +26,8 @@ void startMemory()
         perror("schmat error");
         exit(1);
     }
-    baseBlock[0].PID = 2;
-    baseBlock[0].status = 1;
-    baseBlock[1].PID = 1;
-    baseBlock[1].status = 2;
-    baseBlock[2].PID = 24;
-    baseBlock[2].status = 1;
-    shmdt((void *)baseBlock);
+    setArraySize(FILENAME, arraySize);
+    detach_memory_block(baseBlock);
 }
 
 int main(int argc, char const *argv[])
