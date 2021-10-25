@@ -22,13 +22,13 @@ void insert_process(int init, int p_size, struct memoryBlock *blockList, int arr
         init++;
         p_size--;
     }
-    for (int i = 0; i < arraySize; i++)
-    {
-        printf("El  bloque tiene PID %d  status %d  \n", blockList[i].PID, blockList[i].status);
-    }
+    // for (int i = 0; i < arraySize; i++)
+    // {
+    //     printf("El  bloque  [%d] tiene PID %d  status %d  \n", i, blockList[i].PID, blockList[i].status);
+    // }
 }
 
-void first_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid)
+int first_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid)
 {
 
     int size = 0;
@@ -41,15 +41,16 @@ void first_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid
             if (size >= p_size)
             {
                 insert_process(i - p_size + 1, p_size, blockList, arraySize, pid);
-                break;
+                return i - p_size + 1;
             }
             continue;
         }
         size = 0;
     }
+    return -1;
 }
 
-void best_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid)
+int best_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid)
 {
     int size = 0;
     int index = 0;
@@ -73,10 +74,18 @@ void best_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid)
         }
     }
     if (actual_space[1] >= p_size)
+    {
+
         insert_process(actual_space[0], p_size, blockList, arraySize, pid);
+        return actual_space[0];
+    }
+    else
+    {
+        return -1;
+    }
 }
 
-void worst_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid)
+int worst_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid)
 {
 
     int size = 0;
@@ -101,5 +110,12 @@ void worst_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid
         }
     }
     if (actual_space[1] >= p_size)
+    {
         insert_process(actual_space[0], p_size, blockList, arraySize, pid);
+        return actual_space[0];
+    }
+    else
+    {
+        return -1;
+    }
 }

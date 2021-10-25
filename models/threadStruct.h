@@ -13,8 +13,8 @@ struct threadStruct
 struct threadStruct *threadStruct();
 
 void insert_process(int init, int p_size, struct memoryBlock *blockList, int arraySize, int pid);
-void first_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid);
-void best_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid);
-void worst_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid);
+int first_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid);
+int best_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid);
+int worst_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid);
 
 #endif

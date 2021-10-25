@@ -47,8 +47,10 @@ void startMemory()
     for (int i = 0; i < n; i++)
     {
         baseBlock[i].status = 0;
-        baseBlock[i].PID = 0;
+        baseBlock[i].PID = -1;
     }
+
+    // baseBlock[4].status = 1;
     for (int i = 0; i < n; i++)
     {
         printf("El  bloque tiene PID %d  status %d  \n", i, baseBlock[i].status);

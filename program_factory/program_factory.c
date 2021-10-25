@@ -17,6 +17,15 @@
 
 #define MAXPROGRAMCOUNT 5;
 
+void extractProcess(int processPosition, int size, struct memoryBlock *blockList)
+{
+    for (int i = 0; i < size; i++)
+    {
+        blockList[processPosition + i].PID = -1;
+        blockList[processPosition + i].status = 0;
+    }
+}
+
 int getRandomSize()
 {
     int minSpace = 1;
@@ -42,28 +51,48 @@ void *searchSpace(void *process)
     sem_t *sem;
     struct threadStruct *processCast = (struct threadStruct *)process;
     sem = sem_open("pSem", 0, 0644, 0);
-    sem_wait(sem);
+
     printf("Soy un gordo de  %d espacios \n", processCast->size);
     int len = get_array_size(FILENAME, 0)[0];
+    int processPosition;
+    sem_wait(sem);
     if (processCast->allocationAlgorithm == 1)
     {
         printf("First fit \n");
-        first_fit(processCast->blockList, processCast->size, len, processCast->id);
+        processPosition = first_fit(processCast->blockList, processCast->size, len, processCast->id);
     }
     else if (processCast->allocationAlgorithm == 2)
     {
         printf("Best fit \n");
-        best_fit(processCast->blockList, processCast->size, len, processCast->id);
+        processPosition = best_fit(processCast->blockList, processCast->size, len, processCast->id);
     }
     else
     {
         printf("Worst fit \n");
-        worst_fit(processCast->blockList, processCast->size, len, processCast->id);
+        processPosition = worst_fit(processCast->blockList, processCast->size, len, processCast->id);
     }
-
+    printf("Process %d en el campo %d", processCast->id, processPosition);
+    for (int i = 0; i < get_array_size(FILENAME, 0)[0]; i++)
+    {
+        printf("El  bloque  [%d] tiene PID %d  status %d  \n", i, processCast->blockList[i].PID, processCast->blockList[i].status);
+    }
     sem_post(sem);
     // Missing memory finalization after "runtime"
-    //sleep(processCast->runtime);
+
+    //Kills the process if couldn't find a space
+    if (processPosition == -1)
+    {
+        return;
+    }
+    sleep(processCast->runtime);
+    printf("\n \n \n ---------------------------------- Sale proceso");
+    sem_wait(sem);
+    extractProcess(processPosition, processCast->size, processCast->blockList);
+    sem_post(sem);
+    for (int i = 0; i < get_array_size(FILENAME, 0)[0]; i++)
+    {
+        printf("El  bloque  [%d] tiene PID %d  status %d  \n", i, processCast->blockList[i].PID, processCast->blockList[i].status);
+    }
 }
 
 pthread_t *createProcess(int *allocationAlgorithm, struct memoryBlock *blockList, int programId)
@@ -108,6 +137,14 @@ int main(int argc, char const *argv[])
         //sleep(getRandomWaitTime());
     }
     pthread_join(lastThread, NULL);
+
+    int *e;
+    printf("Waiting... press a key");
+    scanf("%d", &e);
+    for (int i = 0; i < get_array_size(FILENAME, 0)[0]; i++)
+    {
+        printf("El  bloque  [%d] tiene PID %d  status %d  \n", i, blockList[i].PID, blockList[i].status);
+    }
     // pthread_t a[10];
 
     // for (int i = 0; i < 10; i++)
