@@ -45,17 +45,78 @@ int getRandomWaitTime()
     int higherTime = 60;
     return (rand() % (higherTime - lowerTime + 1)) + lowerTime;
 }
+
+void *popFromQueue(int pid, struct memoryBlock *queue)
+{
+    sem_t *sem;
+    sem = sem_open(SEMAPHORE_NAME_QUEUE, 0, 0644, 0);
+    sem_wait(sem);
+    for (int i = 0; i < QUEUE_SIZE; i++)
+    {
+        if (queue[i].PID == pid)
+        {
+            queue[i].status = 0;
+            queue[i].PID = -1;
+            break;
+        }
+    }
+    sem_post(sem);
+}
+
+void *changeQueueStatus(int pid, struct memoryBlock *queue, int status)
+{
+    sem_t *sem;
+    sem = sem_open(SEMAPHORE_NAME_QUEUE, 0, 0644, 0);
+    sem_wait(sem);
+    for (int i = 0; i < QUEUE_SIZE; i++)
+    {
+        if (queue[i].PID == pid)
+        {
+            queue[i].status = status;
+            break;
+        }
+    }
+    sem_post(sem);
+}
+void *insertInReadyQueue(int pid, struct memoryBlock *queue)
+{
+    sem_t *sem;
+    sem = sem_open(SEMAPHORE_NAME_QUEUE, 0, 0644, 0);
+    sem_wait(sem);
+    for (int i = 0; i < QUEUE_SIZE; i++)
+    {
+        if (queue[i].PID == -1)
+        {
+            queue[i].PID = pid;
+            queue[i].status = 2;
+            break;
+        }
+    }
+    sem_post(sem);
+}
+void *printQueue(struct memoryBlock *queue)
+{
+    for (int i = 0; i < QUEUE_SIZE; i++)
+    {
+        printf("[id= %d queue = %d]", queue[i].PID, queue[i].status);
+    }
+    printf("\n");
+}
 void *searchSpace(void *process)
 {
 
     sem_t *sem;
     struct threadStruct *processCast = (struct threadStruct *)process;
-    sem = sem_open("pSem", 0, 0644, 0);
+    sem = sem_open(SEMAPHORE_NAME_MEMORY, 0, 0644, 0);
 
     printf("Soy un gordo de  %d espacios \n", processCast->size);
     int len = get_array_size(FILENAME, 0)[0];
     int processPosition;
+    insertInReadyQueue(processCast->id, processCast->queue);
+    // Critical section
     sem_wait(sem);
+    changeQueueStatus(processCast->id, processCast->queue, 3);
+    printQueue(processCast->queue);
     if (processCast->allocationAlgorithm == 1)
     {
         printf("First fit \n");
@@ -71,19 +132,16 @@ void *searchSpace(void *process)
         printf("Worst fit \n");
         processPosition = worst_fit(processCast->blockList, processCast->size, len, processCast->id);
     }
-    printf("Process %d en el campo %d", processCast->id, processPosition);
-    for (int i = 0; i < get_array_size(FILENAME, 0)[0]; i++)
-    {
-        printf("El  bloque  [%d] tiene PID %d  status %d  \n", i, processCast->blockList[i].PID, processCast->blockList[i].status);
-    }
+    popFromQueue(processCast->id, processCast->queue);
+    // Ends critical section
     sem_post(sem);
-    // Missing memory finalization after "runtime"
 
     //Kills the process if couldn't find a space
     if (processPosition == -1)
     {
         return;
     }
+    printf("Voy a esperar %d \n", processCast->runtime);
     sleep(processCast->runtime);
     printf("\n \n \n ---------------------------------- Sale proceso");
     sem_wait(sem);
@@ -95,18 +153,17 @@ void *searchSpace(void *process)
     }
 }
 
-pthread_t *createProcess(int *allocationAlgorithm, struct memoryBlock *blockList, int programId)
+pthread_t *createProcess(int *allocationAlgorithm, struct memoryBlock *blockList, int programId, struct memoryBlock *readyQueue)
 {
     int size = getRandomSize();
     int runtime = getRandomExecutionTime();
-    //printf("%d", runtime);
     struct threadStruct *currentProcess = threadStruct();
     currentProcess->id = programId;
-    //printf("Hola");
     currentProcess->allocationAlgorithm = allocationAlgorithm;
     currentProcess->runtime = runtime;
     currentProcess->size = size;
     currentProcess->blockList = blockList;
+    currentProcess->queue = readyQueue;
     pthread_t thread_id;
     pthread_create(&thread_id, NULL, searchSpace, (void *)currentProcess);
     return thread_id;
@@ -122,42 +179,21 @@ int main(int argc, char const *argv[])
     scanf("%d", &option);
     printf("Opción %d", option);
     // Obtain the semaphore
-    sem_t *sem;
-    sem = sem_open("pSem", 0, 0644, 0);
     struct memoryBlock *blockList = attach_memory_block(FILENAME, 0);
 
     // Program creation cycle
     int programMaxCount = MAXPROGRAMCOUNT;
     int programCounter = 0;
     pthread_t lastThread;
-    for (int i = 0; i < programMaxCount; i++)
+    struct memoryBlock *queue = get_ready_queue(FILENAME);
+
+    while (1)
     {
-        lastThread = createProcess(option, blockList, programCounter);
+        lastThread = createProcess(option, blockList, programCounter, queue);
         programCounter++;
-        //sleep(getRandomWaitTime());
+        sleep(getRandomWaitTime());
     }
     pthread_join(lastThread, NULL);
 
-    int *e;
-    printf("Waiting... press a key");
-    scanf("%d", &e);
-    for (int i = 0; i < get_array_size(FILENAME, 0)[0]; i++)
-    {
-        printf("El  bloque  [%d] tiene PID %d  status %d  \n", i, blockList[i].PID, blockList[i].status);
-    }
-    // pthread_t a[10];
-
-    // for (int i = 0; i < 10; i++)
-    // {
-    //     pthread_t thread_id;
-    //     pthread_create(&thread_id, NULL, myfunc, i);
-
-    //     a[i] = thread_id;
-    // }
-    // for (int i = 0; i < 10; i++)
-    // {
-    //     pthread_join(a[i], NULL);
-    // }
-    sem_close(sem);
     return 0;
 }

@@ -17,13 +17,12 @@ int destroyBlock()
         printf("Imposible destruir el bloque: %s\n", FILENAME);
     }
 
-    printf("Fin de la destruccion");
-
     return 0;
 }
 int main(int argc, char const *argv[])
 {
     destroyBlock(FILENAME);
-    sem_unlink(SEMAPHORE_NAME);
+    sem_unlink(SEMAPHORE_NAME_MEMORY);
+    sem_unlink(SEMAPHORE_NAME_QUEUE);
     return 0;
 }

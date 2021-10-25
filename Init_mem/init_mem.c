@@ -17,24 +17,26 @@ void startMemory()
     struct memoryBlock *baseBlock;
 
     // Initialize semaphore
-    sem_t *sem;
+    sem_t *semM;
+    sem_t *semQ;
     int *count = malloc(sizeof(int));
     count = 1;
-    sem = sem_open(SEMAPHORE_NAME, O_CREAT | O_EXCL, 0644, count);
-    if (sem == SEM_FAILED)
+    semM = sem_open(SEMAPHORE_NAME_MEMORY, O_CREAT | O_EXCL, 0644, count);
+    if (semM == SEM_FAILED)
     {
         perror("error");
     }
+    semQ = sem_open(SEMAPHORE_NAME_QUEUE, O_CREAT | O_EXCL, 0644, count);
+
     printf("Ingrese la cantidad de espacios de memoria que desea reservar \n");
     int n;
     scanf("%d", &n);
     int requiredBlockSize = n * sizeof(*baseBlock);
+
     int shmid;
 
-    // Our program
     baseBlock = create_memory_block(FILENAME, requiredBlockSize);
 
-    //printf("\nWritting to memory succesful--\n");
     if (baseBlock == (void *)-1)
     {
         perror("schmat error");
@@ -49,17 +51,17 @@ void startMemory()
         baseBlock[i].status = 0;
         baseBlock[i].PID = -1;
     }
-
-    // baseBlock[4].status = 1;
-    for (int i = 0; i < n; i++)
+    struct memoryBlock *queue = get_ready_queue(FILENAME);
+    for (int i = 0; i < QUEUE_SIZE; i++)
     {
-        printf("El  bloque tiene PID %d  status %d  \n", i, baseBlock[i].status);
+        queue[i].status = 0;
+        queue[i].PID = -1;
     }
     shmdt((void *)baseBlock);
     shmdt((void *)size);
-    sem_close(sem);
+    sem_close(semM);
+    sem_close(semQ);
     int *borrar;
-    borrar = get_array_size(FILENAME, sizeof(int));
 }
 
 int main(int argc, char const *argv[])

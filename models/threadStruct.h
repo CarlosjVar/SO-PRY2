@@ -7,6 +7,7 @@ struct threadStruct
     int *indexInMemory;
     int *runtime;
     struct memoryBlock *blockList;
+    struct memoryBlock *queue;
     int *allocationAlgorithm;
     int *size;
 };

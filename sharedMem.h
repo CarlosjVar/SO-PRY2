@@ -13,9 +13,13 @@ bool detach_memory_block(char *block);
 bool destroy_memory_block(char *filename);
 int create_array_size(char *filename, int size);
 int *get_array_size(char *filename, int size);
+struct memoryBlock *get_ready_queue(char *filename);
+int get_queue_id(char *filename);
 
 #define BLOCK_SIZE 4096
 #define FILENAME "memblock.c"
-#define SEMAPHORE_NAME "pSem"
+#define SEMAPHORE_NAME_MEMORY "pSemMem"
+#define SEMAPHORE_NAME_QUEUE "pSemQ"
+#define QUEUE_SIZE 10
 
 #endif
