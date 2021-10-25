@@ -27,21 +27,23 @@ void startMemory()
         perror("schmat error");
         exit(1);
     }
-    // baseBlock[0].PID = 2;
-    // baseBlock[0].status = 1;
-    // baseBlock[1].PID = 1;
-    // baseBlock[1].status = 2;
-    // baseBlock[2].PID = 24;
-    // baseBlock[2].status = 1;
 
     int *size;
     size = get_array_size(FILENAME, sizeof(int));
     size[0] = n;
+    for (int i = 0; i < n; i++)
+    {
+        baseBlock[i].status = 0;
+        baseBlock[i].PID = 0;
+    }
+    for (int i = 0; i < n; i++)
+    {
+        printf("El  bloque tiene PID %d  status %d  \n", i, baseBlock[i].status);
+    }
     shmdt((void *)baseBlock);
     shmdt((void *)size);
     int *borrar;
     borrar = get_array_size(FILENAME, sizeof(int));
-    printf("llega aqui pene %d", borrar[0]);
 }
 
 int main(int argc, char const *argv[])

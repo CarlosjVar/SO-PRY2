@@ -53,7 +53,8 @@ int create_array_size(char *filename, int size)
     return shmget(key, size, 0666 | IPC_CREAT);
 }
 
-int *get_array_size(char *filename, int size){
+int *get_array_size(char *filename, int size)
+{
     int memblock = create_array_size(filename, size);
 
     if (memblock == IPC_RESULT_ERROR)
@@ -133,50 +134,3 @@ bool destroy_memory_block(char *filename)
     }
     return (shmctl(memblock, IPC_RMID, NULL) != IPC_RESULT_ERROR);
 }
-
-
-
-//  int main(int argc, char *argv[]) {
-
-//     // if(argc != 2){
-//     //     printf("usage - %s [stuff to write]", argv[0]);
-//     // }
-
-//     // char *bloque = attach_memory_block(FILENAME, BLOCK_SIZE);
-
-//     // if(bloque == NULL){
-//     //     printf("Imposible conseguir el bloque\n");
-//     //     return -1;
-//     // }
-//     // printf("Escribiendo: \"%s\"\n", argv[1]);
-//     // strncpy(bloque,argv[1],BLOCK_SIZE);
-
-//     // detach_memory_block(bloque);
-
-//     // printf("Fin de la escritura\n\n");
-
-//     // return 0;
-
-// ///////////////////////////////////////////////////////
-
-//     if(argc != 1){
-//         printf("usage - %s // no args", argv[0]);
-//         return -1;
-//     }
-
-//     char *bloque = attach_memory_block(FILENAME, BLOCK_SIZE);
-
-//     if(bloque == NULL){
-//         printf("Imposible conseguir el bloque\n");
-//         return -1;
-//     }
-
-//     printf("Leyendo: \"%s\"\n", bloque);
-
-//     detach_memory_block(bloque);
-
-//     printf("Fin de la lectura\n\n");
-
-//     return 0;
-
-// }

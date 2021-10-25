@@ -1,12 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include "./models/memoryBlock.h"
-#include "sharedMem.h"
-#define FILENAME "memblock.c"
+#include "memoryBlock.h"
 
 void insert_process(int init, int p_size, struct memoryBlock *blockList, int arraySize)
 {
@@ -96,21 +88,4 @@ void worst_fit(struct memoryBlock *blockList, int p_size, int arraySize)
     }
     if (actual_space[1] >= p_size)
         insert_process(actual_space[0], p_size, blockList, arraySize);
-}
-
-int main(int argc, char const *argv[])
-{
-    struct memoryBlock *blockList;
-    int *arraySize;
-    arraySize = get_array_size(FILENAME, sizeof(int));
-    int requiredBlockSize = arraySize[0] * sizeof(blockList);
-
-    blockList = attach_memory_block(FILENAME, requiredBlockSize);
-    for (int i = 0; i < arraySize[0]; i++)
-    {
-        printf("El  bloque tiene PID %d  status %d  \n", i, blockList[i].status);
-    }
-    printf("---------------------------------------\n");
-
-    best_fit(blockList, 1, arraySize[0]);
 }
