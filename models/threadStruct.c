@@ -22,10 +22,10 @@ void insert_process(int init, int p_size, struct memoryBlock *blockList, int arr
         init++;
         p_size--;
     }
-    // for (int i = 0; i < arraySize; i++)
-    // {
-    //     printf("El  bloque tiene PID %d  status %d  \n", blockList[i].PID, blockList[i].status);
-    // }
+    for (int i = 0; i < arraySize; i++)
+    {
+        printf("El  bloque tiene PID %d  status %d  \n", blockList[i].PID, blockList[i].status);
+    }
 }
 
 void first_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid)

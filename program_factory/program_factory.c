@@ -45,20 +45,25 @@ void *searchSpace(void *process)
     sem_wait(sem);
     printf("Soy un gordo de  %d espacios \n", processCast->size);
     int len = get_array_size(FILENAME, 0)[0];
-    switch (*processCast->allocationAlgorithm)
+    if (processCast->allocationAlgorithm == 1)
     {
-    case 1:
+        printf("First fit \n");
         first_fit(processCast->blockList, processCast->size, len, processCast->id);
-        break;
-    case 2:
-        best_fit(processCast->blockList, processCast->size, len, processCast->id);
-        break;
-    case 3:
-        worst_fit(processCast->blockList, processCast->size, len, processCast->id);
-        break;
     }
+    else if (processCast->allocationAlgorithm == 2)
+    {
+        printf("Best fit \n");
+        best_fit(processCast->blockList, processCast->size, len, processCast->id);
+    }
+    else
+    {
+        printf("Worst fit \n");
+        worst_fit(processCast->blockList, processCast->size, len, processCast->id);
+    }
+
     sem_post(sem);
-    // Missing the part where the program exits memory
+    // Missing memory finalization after "runtime"
+    //sleep(processCast->runtime);
 }
 
 pthread_t *createProcess(int *allocationAlgorithm, struct memoryBlock *blockList, int programId)
