@@ -15,7 +15,7 @@
 #include "../models/threadStruct.h"
 #include <fcntl.h> /* O_CREAT, O_EXEC          */
 
-#define MAXPROGRAMCOUNT 100;
+#define MAXPROGRAMCOUNT 5;
 
 int getRandomSize()
 {
@@ -43,8 +43,22 @@ void *searchSpace(void *process)
     struct threadStruct *processCast = (struct threadStruct *)process;
     sem = sem_open("pSem", 0, 0644, 0);
     sem_wait(sem);
-    printf("Soy un gordo de  %d espacios \n", processCast->allocationAlgorithm);
+    printf("Soy un gordo de  %d espacios \n", processCast->size);
+    int len = get_array_size(FILENAME, 0)[0];
+    switch (*processCast->allocationAlgorithm)
+    {
+    case 1:
+        first_fit(processCast->blockList, processCast->size, len, processCast->id);
+        break;
+    case 2:
+        best_fit(processCast->blockList, processCast->size, len, processCast->id);
+        break;
+    case 3:
+        worst_fit(processCast->blockList, processCast->size, len, processCast->id);
+        break;
+    }
     sem_post(sem);
+    // Missing the part where the program exits memory
 }
 
 pthread_t *createProcess(int *allocationAlgorithm, struct memoryBlock *blockList, int programId)

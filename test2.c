@@ -112,5 +112,5 @@ int main(int argc, char const *argv[])
     }
     printf("---------------------------------------\n");
 
-    best_fit(blockList, 1, arraySize[0]);
+    first_fit(blockList, 1, arraySize[0]);
 }

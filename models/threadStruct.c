@@ -9,21 +9,26 @@ struct threadStruct *threadStruct()
 
     return currentProcess;
 }
-void insert_process(int init, int p_size, struct memoryBlock *blockList, int arraySize)
+void insert_process(int init, int p_size, struct memoryBlock *blockList, int arraySize, int pid)
 {
+    struct memoryBlock *newBlock = malloc(sizeof(struct memoryBlock));
+    newBlock->PID = pid;
+    newBlock->status = 1;
     while (p_size > 0)
     {
+        // printf("En el espacio %d", init);
 
-        blockList[init++].status = 1;
+        blockList[init] = *newBlock;
+        init++;
         p_size--;
     }
-    for (int i = 0; i < arraySize; i++)
-    {
-        printf("El  bloque tiene PID %d  status %d  \n", i, blockList[i].status);
-    }
+    // for (int i = 0; i < arraySize; i++)
+    // {
+    //     printf("El  bloque tiene PID %d  status %d  \n", blockList[i].PID, blockList[i].status);
+    // }
 }
 
-void first_fit(struct memoryBlock *blockList, int p_size, int arraySize)
+void first_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid)
 {
 
     int size = 0;
@@ -35,7 +40,7 @@ void first_fit(struct memoryBlock *blockList, int p_size, int arraySize)
             size += 1;
             if (size >= p_size)
             {
-                insert_process(i - p_size + 1, p_size, blockList, arraySize);
+                insert_process(i - p_size + 1, p_size, blockList, arraySize, pid);
                 break;
             }
             continue;
@@ -44,7 +49,7 @@ void first_fit(struct memoryBlock *blockList, int p_size, int arraySize)
     }
 }
 
-void best_fit(struct memoryBlock *blockList, int p_size, int arraySize)
+void best_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid)
 {
     int size = 0;
     int index = 0;
@@ -68,10 +73,10 @@ void best_fit(struct memoryBlock *blockList, int p_size, int arraySize)
         }
     }
     if (actual_space[1] >= p_size)
-        insert_process(actual_space[0], p_size, blockList, arraySize);
+        insert_process(actual_space[0], p_size, blockList, arraySize, pid);
 }
 
-void worst_fit(struct memoryBlock *blockList, int p_size, int arraySize)
+void worst_fit(struct memoryBlock *blockList, int p_size, int arraySize, int pid)
 {
 
     int size = 0;
@@ -96,5 +101,5 @@ void worst_fit(struct memoryBlock *blockList, int p_size, int arraySize)
         }
     }
     if (actual_space[1] >= p_size)
-        insert_process(actual_space[0], p_size, blockList, arraySize);
+        insert_process(actual_space[0], p_size, blockList, arraySize, pid);
 }
