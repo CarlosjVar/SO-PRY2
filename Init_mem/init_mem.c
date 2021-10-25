@@ -27,12 +27,27 @@ void startMemory()
         perror("schmat error");
         exit(1);
     }
-    // baseBlock[0].PID = 2;
-    // baseBlock[0].status = 1;
-    // baseBlock[1].PID = 1;
-    // baseBlock[1].status = 2;
-    // baseBlock[2].PID = 24;
-    // baseBlock[2].status = 1;
+    baseBlock[0].PID = 77;
+    baseBlock[0].status = 1;
+    // baseBlock[1].PID = 0;
+    // baseBlock[1].status = 0;
+    // baseBlock[2].PID = 0;
+    // baseBlock[2].status = 0;
+    baseBlock[3].PID = 24;
+    baseBlock[3].status = 1;
+    baseBlock[4].PID = 33;
+    baseBlock[4].status = 1;
+    // baseBlock[5].PID = 0;
+    // baseBlock[5].status = 0;
+    
+    // baseBlock[6].PID = 0;
+    // baseBlock[6].status = 0;
+    // baseBlock[7].PID = 0;
+    // baseBlock[7].status = 0;
+    // baseBlock[8].PID = 0;
+    // baseBlock[8].status = 0;
+    baseBlock[9].PID = 99;
+    baseBlock[9].status = 1;
 
     int *size;
     size = get_array_size(FILENAME, sizeof(int));
