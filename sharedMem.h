@@ -16,5 +16,6 @@ int *get_array_size(char *filename, int size);
 
 #define BLOCK_SIZE 4096
 #define FILENAME "memblock.c"
+#define SEMAPHORE_NAME "pSem"
 
 #endif

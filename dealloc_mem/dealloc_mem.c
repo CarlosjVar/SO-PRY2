@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../sharedMem.h"
+#include <semaphore.h> /* sem_open(), sem_destroy(), sem_wait().. */
+#include <sys/types.h> /* key_t, sem_t, pid_t      */
 
 int destroyBlock()
 {
@@ -22,5 +24,6 @@ int destroyBlock()
 int main(int argc, char const *argv[])
 {
     destroyBlock(FILENAME);
+    sem_unlink(SEMAPHORE_NAME);
     return 0;
 }

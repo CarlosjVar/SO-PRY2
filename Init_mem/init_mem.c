@@ -1,21 +1,34 @@
 #include "../sharedMem.h"
 #include "../models/memoryBlock.h"
-#include <stdio.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
+#include <pthread.h>
+#include <stdio.h>  /* printf()                 */
+#include <stdlib.h> /* exit(), malloc(), free() */
+#include <unistd.h>
+#include <sys/types.h> /* key_t, sem_t, pid_t      */
+#include <sys/wait.h>
+#include <sys/shm.h>   /* shmat(), IPC_RMID        */
+#include <errno.h>     /* errno, ECHILD            */
+#include <semaphore.h> /* sem_open(), sem_destroy(), sem_wait().. */
+#include <fcntl.h>     /* O_CREAT, O_EXEC          */
 #define IPC_RESULT_ERROR (-1)
 void startMemory()
 {
     struct memoryBlock *baseBlock;
+
+    // Initialize semaphore
+    sem_t *sem;
+    int *count = malloc(sizeof(int));
+    count = 1;
+    sem = sem_open(SEMAPHORE_NAME, O_CREAT | O_EXCL, 0644, count);
+    if (sem == SEM_FAILED)
+    {
+        perror("error");
+    }
     printf("Ingrese la cantidad de espacios de memoria que desea reservar \n");
     int n;
     scanf("%d", &n);
     int requiredBlockSize = n * sizeof(*baseBlock);
-
     int shmid;
 
     // Our program
@@ -42,6 +55,7 @@ void startMemory()
     }
     shmdt((void *)baseBlock);
     shmdt((void *)size);
+    sem_close(sem);
     int *borrar;
     borrar = get_array_size(FILENAME, sizeof(int));
 }
