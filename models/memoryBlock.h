@@ -12,9 +12,7 @@ struct memoryBlock
 {
 
     int PID;
-    int status; //0 = libre, 1 = bloqueado, 2 = corriendo
-
+    int status; //0 = libre, 1 = bloqueado, 2 = corriendo, 3 = Usando memoria
 };
-
 
 #endif
