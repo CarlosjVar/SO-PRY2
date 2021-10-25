@@ -12,38 +12,96 @@
 #include <fcntl.h>     /* O_CREAT, O_EXEC          */
 #include "../sharedMem.h"
 #include "../models/memoryBlock.h"
+#include "../models/threadStruct.h"
 #include <fcntl.h> /* O_CREAT, O_EXEC          */
-void *myfunc(void *id)
-{
-    sem_t *sem;
 
+#define MAXPROGRAMCOUNT 100;
+
+int getRandomSize()
+{
+    int minSpace = 1;
+    int maxSpace = 10;
+    return (rand() % (maxSpace - minSpace + 1)) + minSpace;
+}
+
+int getRandomExecutionTime()
+{
+    int lowerTime = 20;
+    int higherTime = 60;
+    return (rand() % (higherTime - lowerTime + 1)) + lowerTime;
+}
+int getRandomWaitTime()
+{
+    int lowerTime = 30;
+    int higherTime = 60;
+    return (rand() % (higherTime - lowerTime + 1)) + lowerTime;
+}
+void *searchSpace(void *process)
+{
+
+    sem_t *sem;
+    struct threadStruct *processCast = (struct threadStruct *)process;
     sem = sem_open("pSem", 0, 0644, 0);
     sem_wait(sem);
-    printf("Soy el thread %d\n", id);
+    printf("Soy un gordo de  %d espacios \n", processCast->allocationAlgorithm);
     sem_post(sem);
+}
+
+pthread_t *createProcess(int *allocationAlgorithm, struct memoryBlock *blockList, int programId)
+{
+    int size = getRandomSize();
+    int runtime = getRandomExecutionTime();
+    //printf("%d", runtime);
+    struct threadStruct *currentProcess = threadStruct();
+    currentProcess->id = programId;
+    //printf("Hola");
+    currentProcess->allocationAlgorithm = allocationAlgorithm;
+    currentProcess->runtime = runtime;
+    currentProcess->size = size;
+    currentProcess->blockList = blockList;
+    pthread_t thread_id;
+    pthread_create(&thread_id, NULL, searchSpace, (void *)currentProcess);
+    return thread_id;
 }
 
 int main(int argc, char const *argv[])
 {
+    // Select allocation algorithm
+    srand(time(0));
     printf("Bienvenido al Programa Productor de Procesos, por favor seleccione con qué tipo de\
     allocación desea ejecutar el programa \n1 -> First Fit \n2 -> Best Fit\n3 -> Worst Fit\n>>> ");
     int *option;
     scanf("%d", &option);
     printf("Opción %d", option);
+    // Obtain the semaphore
     sem_t *sem;
     sem = sem_open("pSem", 0, 0644, 0);
-    pthread_t a[10];
-    for (int i = 0; i < 10; i++)
-    {
-        pthread_t thread_id;
-        pthread_create(&thread_id, NULL, myfunc, i);
+    struct memoryBlock *blockList = attach_memory_block(FILENAME, 0);
 
-        a[i] = thread_id;
-    }
-    for (int i = 0; i < 10; i++)
+    // Program creation cycle
+    int programMaxCount = MAXPROGRAMCOUNT;
+    int programCounter = 0;
+    pthread_t lastThread;
+    for (int i = 0; i < programMaxCount; i++)
     {
-        pthread_join(a[i], NULL);
+        lastThread = createProcess(option, blockList, programCounter);
+        programCounter++;
+        //sleep(getRandomWaitTime());
     }
+    pthread_join(lastThread, NULL);
+    // pthread_t a[10];
+
+    // for (int i = 0; i < 10; i++)
+    // {
+    //     pthread_t thread_id;
+    //     pthread_create(&thread_id, NULL, myfunc, i);
+
+    //     a[i] = thread_id;
+    // }
+    // for (int i = 0; i < 10; i++)
+    // {
+    //     pthread_join(a[i], NULL);
+    // }
     sem_close(sem);
     return 0;
 }
