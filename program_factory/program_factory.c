@@ -117,6 +117,8 @@ void *searchSpace(void *process)
     sem_wait(sem);
     changeQueueStatus(processCast->id, processCast->queue, 3);
     printQueue(processCast->queue);
+
+    // TODO: BITÁCORA LÍNEAS ASIGNADAS, LO PUEDE HACER LUEGO DEL EN LA SECCIÓN DE LA LÍNEA 142
     if (processCast->allocationAlgorithm == 1)
     {
         printf("First fit \n");
@@ -139,12 +141,15 @@ void *searchSpace(void *process)
     //Kills the process if couldn't find a space
     if (processPosition == -1)
     {
+        // TODO: LOG DE NO ENTRÓ EN MEMORÍA
         return;
     }
+    // EN EL ELSE PUEDE MANDAR A BITÁCORA QUE LO ESCRIBIÓ EN LOS CAMPOS DESDE PROCESSPOSITION A PROCESSPOSITION + TAMAÑO DEL PROCESO
     printf("Voy a esperar %d \n", processCast->runtime);
     sleep(processCast->runtime);
     printf("\n \n \n ---------------------------------- Sale proceso");
     sem_wait(sem);
+    // TODO: LOG DE SE DESASIGNÓ DE MEMORIA
     extractProcess(processPosition, processCast->size, processCast->blockList);
     sem_post(sem);
     for (int i = 0; i < get_array_size(FILENAME, 0)[0]; i++)
