@@ -158,7 +158,7 @@ void *searchSpace(void *process)
     }
 }
 
-pthread_t *createProcess(int *allocationAlgorithm, struct memoryBlock *blockList, int programId, struct memoryBlock *readyQueue)
+pthread_t *createProcess(int allocationAlgorithm, struct memoryBlock *blockList, int programId, struct memoryBlock *readyQueue)
 {
     int size = getRandomSize();
     int runtime = getRandomExecutionTime();
@@ -180,7 +180,7 @@ int main(int argc, char const *argv[])
     srand(time(0));
     printf("Bienvenido al Programa Productor de Procesos, por favor seleccione con qué tipo de\
     allocación desea ejecutar el programa \n1 -> First Fit \n2 -> Best Fit\n3 -> Worst Fit\n>>> ");
-    int *option;
+    int option;
     scanf("%d", &option);
     printf("Opción %d", option);
     // Obtain the semaphore
