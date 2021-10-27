@@ -191,10 +191,11 @@ void *searchSpace(void *process)
         processCast->pos = processPosition;
         writeLog(processCast,1 ,  processPosition);
     }
-    popFromQueue(processCast->id, processCast->queue);
-    // Ends critical section
-    sem_post(sem);
 
+    // Ends critical section
+
+    sem_post(sem);
+    changeQueueStatus(processCast->id, processCast->queue, 2);
     //Kills the process if couldn't find a space
     if (processPosition == -1)
     {
@@ -205,6 +206,7 @@ void *searchSpace(void *process)
     // EN EL ELSE PUEDE MANDAR A BITÁCORA QUE LO ESCRIBIÓ EN LOS CAMPOS DESDE PROCESSPOSITION A PROCESSPOSITION + TAMAÑO DEL PROCESO
     printf("Voy a esperar %d \n", processCast->runtime);
     sleep(processCast->runtime);
+    popFromQueue(processCast->id, processCast->queue);
     printf("\n \n \n ---------------------------------- Sale proceso");
     sem_wait(sem);
     // TODO: LOG DE SE DESASIGNÓ DE MEMORIA
