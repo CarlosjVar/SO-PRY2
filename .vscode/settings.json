@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "shm.h": "c",
+        "ipc.h": "c"
+    }
+}

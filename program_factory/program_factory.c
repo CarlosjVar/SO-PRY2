@@ -197,6 +197,7 @@ void *searchSpace(void *process)
     sem_post(sem);
     changeQueueStatus(processCast->id, processCast->queue, 2);
     //Kills the process if couldn't find a space
+    printQueue(processCast->queue);
     if (processPosition == -1)
     {
         // TODO: LOG DE NO ENTRÓ EN MEMORÍA
@@ -238,6 +239,9 @@ pthread_t *createProcess(int allocationAlgorithm, struct memoryBlock *blockList,
 
 int main(int argc, char const *argv[])
 {
+    
+    int *pidBlock = get_processGenerator_id(FILENAME, sizeof(int));
+    pidBlock[0] = getpid();
     // Select allocation algorithm
     srand(time(0));
     printf("Bienvenido al Programa Productor de Procesos, por favor seleccione con qué tipo de\

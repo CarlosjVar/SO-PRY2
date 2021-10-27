@@ -67,6 +67,6 @@ void startMemory()
 int main(int argc, char const *argv[])
 {
     startMemory();
-    printf("Bloque creado correctamente");
+    printf("Bloque creado correctamente\n");
     return 0;
 }
