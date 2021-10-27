@@ -10,6 +10,7 @@ struct threadStruct
     struct memoryBlock *queue;
     int allocationAlgorithm;
     int *size;
+    int *pos;
 };
 struct threadStruct *threadStruct();
 

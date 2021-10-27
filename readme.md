@@ -5,7 +5,7 @@ Todos estos comandos son ejecutados desde el root (/SO-PRY2)
 ## Programa inicializador
 
 ```
-gcc ./init_mem/init_mem.c  sharedMem.c  ./models/memoryBlock.c -pthread -o init 
+gcc ./Init_mem/init_mem.c  sharedMem.c  ./models/memoryBlock.c -pthread -o init 
 
 ```
 

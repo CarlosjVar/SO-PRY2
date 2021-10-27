@@ -14,6 +14,8 @@ void insert_process(int init, int p_size, struct memoryBlock *blockList, int arr
     struct memoryBlock *newBlock = malloc(sizeof(struct memoryBlock));
     newBlock->PID = pid;
     newBlock->status = 1;
+    printf("Al proceso: %d", pid);
+    printf(" inicia en index: %d", init);
     while (p_size > 0)
     {
         // printf("En el espacio %d", init);
@@ -22,6 +24,7 @@ void insert_process(int init, int p_size, struct memoryBlock *blockList, int arr
         init++;
         p_size--;
     }
+    
     // for (int i = 0; i < arraySize; i++)
     // {
     //     printf("El  bloque  [%d] tiene PID %d  status %d  \n", i, blockList[i].PID, blockList[i].status);

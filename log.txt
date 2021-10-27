@@ -1,0 +1,89 @@
+───────────────────────── 
+ Proceso # 0 
+ 2021-10-26 18:58:34 
+ Acción: asignando memoria. 
+ Se asigna los siguientes espacios en memoria: 
+ 0 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ Se ha asignado memoria correctamente. 
+ ───────────────────────── 
+ Proceso # 0 
+ 2021-10-26 18:59:02 
+ Acción: asignando memoria. 
+ Se asigna los siguientes espacios en memoria: 
+ 0 
+ 1 
+ Se ha asignado memoria correctamente. 
+ ───────────────────────── 
+ Proceso # 0 
+ 2021-10-26 18:59:11 
+ Acción: desasignando memoria. 
+ Se desasigna los siguientes espacios en memoria: 
+ 0 
+ 1 
+ Se ha desasignado memoria correctamente. 
+ ───────────────────────── 
+ Proceso # 1 
+ 2021-10-26 18:59:52 
+ Acción: asignando memoria. 
+ Se asigna los siguientes espacios en memoria: 
+ 0 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+ Se ha asignado memoria correctamente. 
+ ───────────────────────── 
+ Proceso # 1 
+ 2021-10-26 19:00:01 
+ Acción: desasignando memoria. 
+ Se desasigna los siguientes espacios en memoria: 
+ 0 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ 8 
+ 9 
+ Se ha desasignado memoria correctamente. 
+ ───────────────────────── 
+ Proceso # 2 
+ 2021-10-26 19:00:50 
+ Acción: asignando memoria. 
+ Se asigna los siguientes espacios en memoria: 
+ 0 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ Se ha asignado memoria correctamente. 
+ ───────────────────────── 
+ Proceso # 2 
+ 2021-10-26 19:00:59 
+ Acción: desasignando memoria. 
+ Se desasigna los siguientes espacios en memoria: 
+ 0 
+ 1 
+ 2 
+ 3 
+ 4 
+ 5 
+ 6 
+ 7 
+ Se ha desasignado memoria correctamente. 
+ 

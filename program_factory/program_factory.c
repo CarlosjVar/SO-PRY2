@@ -14,6 +14,7 @@
 #include "../models/memoryBlock.h"
 #include "../models/threadStruct.h"
 #include <fcntl.h> /* O_CREAT, O_EXEC          */
+#include <time.h>
 
 #define MAXPROGRAMCOUNT 5;
 
@@ -35,8 +36,8 @@ int getRandomSize()
 
 int getRandomExecutionTime()
 {
-    int lowerTime = 20;
-    int higherTime = 60;
+    int lowerTime = 5;
+    int higherTime = 15;
     return (rand() % (higherTime - lowerTime + 1)) + lowerTime;
 }
 int getRandomWaitTime()
@@ -102,37 +103,93 @@ void *printQueue(struct memoryBlock *queue)
     }
     printf("\n");
 }
+
+void writeLog( struct threadStruct *process, int tipo, int pos)
+{
+    time_t t = time(NULL);
+    struct tm tiempoLocal = *localtime(&t);
+    // El lugar en donde se pondrá la fecha y hora formateadas
+    char fechaHora[70];
+    char accion[70] = "gatito";
+    // El formato.
+    char *formato = "%Y-%m-%d %H:%M:%S";
+    // Intentar formatear
+    int bytesEscritos =
+        strftime(fechaHora, sizeof fechaHora, formato, &tiempoLocal);
+    if (bytesEscritos != 0) {
+        FILE *fp;
+        fp=fopen("log.txt", "a");
+        fprintf(fp, "%s \n ", "─────────────────────────");
+        fprintf(fp, "%s %d \n ", "Proceso #",process->id);
+        fprintf(fp, "%s \n ", fechaHora);
+        if(tipo == 0){
+            fprintf(fp, "%s \n ", "Acción: asignando memoria.");
+            fprintf(fp, "%s \n ", "No se pudo asignar memoria.");
+        }
+        else if(tipo == 1){
+            fprintf(fp, "%s \n ", "Acción: asignando memoria.");
+            fprintf(fp, "%s \n ", "Se asigna los siguientes espacios en memoria:");
+            printf("Soy un gordo de  %d espacios, inicio en %d \n", process->size, pos);
+            int p_size = process->size;
+            while (p_size > 0){
+                fprintf(fp, "%d \n ", pos++);
+                p_size--;
+            }
+            fprintf(fp, "%s \n ", "Se ha asignado memoria correctamente.");
+        }
+        else if(tipo == 2){
+            fprintf(fp, "%s \n ", "Acción: desasignando memoria.");
+            fprintf(fp, "%s \n ", "Se desasigna los siguientes espacios en memoria:");
+            int p_size = process->size;
+            while (p_size > 0){
+                fprintf(fp, "%d \n ", pos++);
+                p_size--;
+            }
+            fprintf(fp, "%s \n ", "Se ha desasignado memoria correctamente.");
+        }
+        fclose(fp);
+        
+    }
+}
+
 void *searchSpace(void *process)
 {
-
     sem_t *sem;
+
     struct threadStruct *processCast = (struct threadStruct *)process;
     sem = sem_open(SEMAPHORE_NAME_MEMORY, 0, 0644, 0);
-
     printf("Soy un gordo de  %d espacios \n", processCast->size);
     int len = get_array_size(FILENAME, 0)[0];
     int processPosition;
     insertInReadyQueue(processCast->id, processCast->queue);
     // Critical section
     sem_wait(sem);
+    
     changeQueueStatus(processCast->id, processCast->queue, 3);
-    printQueue(processCast->queue);
 
     // TODO: BITÁCORA LÍNEAS ASIGNADAS, LO PUEDE HACER LUEGO DEL EN LA SECCIÓN DE LA LÍNEA 142
     if (processCast->allocationAlgorithm == 1)
     {
         printf("First fit \n");
         processPosition = first_fit(processCast->blockList, processCast->size, len, processCast->id);
+        printf("1. Al proceso: %d", processCast->id);
+        printf(" inicia en index: %d", processPosition);
+        processCast->pos = processPosition;
+        writeLog(processCast,1, processPosition);
     }
     else if (processCast->allocationAlgorithm == 2)
     {
         printf("Best fit \n");
         processPosition = best_fit(processCast->blockList, processCast->size, len, processCast->id);
+        processCast->pos = processPosition;
+        writeLog(processCast,1 , processPosition);
     }
     else
     {
         printf("Worst fit \n");
         processPosition = worst_fit(processCast->blockList, processCast->size, len, processCast->id);
+        processCast->pos = processPosition;
+        writeLog(processCast,1 ,  processPosition);
     }
     popFromQueue(processCast->id, processCast->queue);
     // Ends critical section
@@ -142,6 +199,7 @@ void *searchSpace(void *process)
     if (processPosition == -1)
     {
         // TODO: LOG DE NO ENTRÓ EN MEMORÍA
+        writeLog(processCast,0, 0);
         return;
     }
     // EN EL ELSE PUEDE MANDAR A BITÁCORA QUE LO ESCRIBIÓ EN LOS CAMPOS DESDE PROCESSPOSITION A PROCESSPOSITION + TAMAÑO DEL PROCESO
@@ -151,6 +209,8 @@ void *searchSpace(void *process)
     sem_wait(sem);
     // TODO: LOG DE SE DESASIGNÓ DE MEMORIA
     extractProcess(processPosition, processCast->size, processCast->blockList);
+    writeLog(processCast,2, processCast->pos);
+    processCast->pos = -1;
     sem_post(sem);
     for (int i = 0; i < get_array_size(FILENAME, 0)[0]; i++)
     {
