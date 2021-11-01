@@ -36,12 +36,14 @@ int getRandomSize()
 
 int getRandomExecutionTime()
 {
-    int lowerTime = 5;
-    int higherTime = 15;
+    int lowerTime = 20;
+    int higherTime = 60;
     return (rand() % (higherTime - lowerTime + 1)) + lowerTime;
 }
 int getRandomWaitTime()
 {
+    // int lowerTime = 12; Better times for testing
+    // int higherTime = 20;
     int lowerTime = 30;
     int higherTime = 60;
     return (rand() % (higherTime - lowerTime + 1)) + lowerTime;
@@ -122,7 +124,7 @@ void writeLog( struct threadStruct *process, int tipo, int pos)
         fprintf(fp, "%s \n ", "─────────────────────────");
         fprintf(fp, "%s %d \n ", "Proceso #",process->id);
         fprintf(fp, "%s \n ", fechaHora);
-        if(tipo == 0){
+        if(tipo == 0 || pos == -1){
             fprintf(fp, "%s \n ", "Acción: asignando memoria.");
             fprintf(fp, "%s \n ", "No se pudo asignar memoria.");
         }
@@ -158,7 +160,7 @@ void *searchSpace(void *process)
 
     struct threadStruct *processCast = (struct threadStruct *)process;
     sem = sem_open(SEMAPHORE_NAME_MEMORY, 0, 0644, 0);
-    printf("Soy un gordo de  %d espacios \n", processCast->size);
+    printf("\nespacios \n", processCast->size);
     int len = get_array_size(FILENAME, 0)[0];
     int processPosition;
     insertInReadyQueue(processCast->id, processCast->queue);
@@ -170,23 +172,18 @@ void *searchSpace(void *process)
     // TODO: BITÁCORA LÍNEAS ASIGNADAS, LO PUEDE HACER LUEGO DEL EN LA SECCIÓN DE LA LÍNEA 142
     if (processCast->allocationAlgorithm == 1)
     {
-        printf("First fit \n");
         processPosition = first_fit(processCast->blockList, processCast->size, len, processCast->id);
-        printf("1. Al proceso: %d", processCast->id);
-        printf(" inicia en index: %d", processPosition);
         processCast->pos = processPosition;
         writeLog(processCast,1, processPosition);
     }
     else if (processCast->allocationAlgorithm == 2)
     {
-        printf("Best fit \n");
         processPosition = best_fit(processCast->blockList, processCast->size, len, processCast->id);
         processCast->pos = processPosition;
         writeLog(processCast,1 , processPosition);
     }
     else
     {
-        printf("Worst fit \n");
         processPosition = worst_fit(processCast->blockList, processCast->size, len, processCast->id);
         processCast->pos = processPosition;
         writeLog(processCast,1 ,  processPosition);
@@ -201,11 +198,11 @@ void *searchSpace(void *process)
     if (processPosition == -1)
     {
         // TODO: LOG DE NO ENTRÓ EN MEMORÍA
-        writeLog(processCast,0, 0);
+        //writeLog(processCast,0, 0);
         return;
     }
     // EN EL ELSE PUEDE MANDAR A BITÁCORA QUE LO ESCRIBIÓ EN LOS CAMPOS DESDE PROCESSPOSITION A PROCESSPOSITION + TAMAÑO DEL PROCESO
-    printf("Voy a esperar %d \n", processCast->runtime);
+    printf("\nVoy a esperar %d \n", processCast->runtime);
     sleep(processCast->runtime);
     popFromQueue(processCast->id, processCast->queue);
     printf("\n \n \n ---------------------------------- Sale proceso");
@@ -215,10 +212,8 @@ void *searchSpace(void *process)
     writeLog(processCast,2, processCast->pos);
     processCast->pos = -1;
     sem_post(sem);
-    for (int i = 0; i < get_array_size(FILENAME, 0)[0]; i++)
-    {
-        printf("El  bloque  [%d] tiene PID %d  status %d  \n", i, processCast->blockList[i].PID, processCast->blockList[i].status);
-    }
+ 
+    printf("\n Salio el proceso %d \n", processCast->id);
 }
 
 pthread_t *createProcess(int allocationAlgorithm, struct memoryBlock *blockList, int programId, struct memoryBlock *readyQueue)
