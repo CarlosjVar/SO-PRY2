@@ -15,46 +15,56 @@
 #include <fcntl.h>
 #define IPC_RESULT_ERROR (-1)
 
-void spyMemory(){
+void spyMemory()
+{
 
     int *memorySize = get_array_size(FILENAME, sizeof(int));
     struct memoryBlock *baseBlock;
-    int requiredBlockSize = memorySize[0]* sizeof(baseBlock);
+    int requiredBlockSize = memorySize[0] * sizeof(baseBlock);
     baseBlock = attach_memory_block(FILENAME, requiredBlockSize);
 
     for (int i = 0; i < memorySize[0]; i++)
     {
+        if (baseBlock[i].status == 7)
+        {
+            printf("\033[0;31m");
+        }
+        else if (baseBlock[i].status != 0)
+        {
+            printf(" \033[0;32m");
+        }
+
         printf("[ Espacio:%d ID:%d ", i, baseBlock[i].PID);
 
         if (baseBlock[i].status == 0)
         {
             printf("Vacio ]");
-
-        }else{
-
-            printf("En uso ]");
-
         }
-        
-        if ((i+1) % 3 == 0)
+        else
+        {
+            printf("En uso ]");
+        }
+        printf("\033[0m");
+        if ((i + 1) % 3 == 0)
         {
             printf("\n");
-        } 
+        }
     }
     printf("\n");
     shmdt((void *)baseBlock);
 }
 
-void spyProcesses(){
+void spyProcesses()
+{
 
     struct memoryBlock *queue;
     queue = get_ready_queue(FILENAME);
     int currentId = -5;
 
+    for (int i = 0; i < QUEUE_SIZE; i++)
+    {
 
-    for (int i = 0; i < QUEUE_SIZE; i++){
-        
-        if (queue[i].PID != -1 )
+        if (queue[i].PID != -1)
         {
             printf("* Process ID: %d , Estado: ", queue[i].PID);
             switch (queue[i].status)
@@ -69,9 +79,9 @@ void spyProcesses(){
             default:
                 printf("Accediendo a Memoria");
                 break;
-            }  
-            printf("\n");                
-        }        
+            }
+            printf("\n");
+        }
     }
     shmdt((void *)queue);
 }
@@ -82,7 +92,7 @@ int main(int argc, char const *argv[])
     sem = sem_open(SEMAPHORE_NAME_QUEUE, 0, 0644, 0);
 
     int *pidBlock = get_spy_id(FILENAME, sizeof(int));
-    pidBlock[0] = getpid(); 
+    pidBlock[0] = getpid();
 
     shmdt((void *)pidBlock);
 
@@ -90,7 +100,7 @@ int main(int argc, char const *argv[])
     {
         printf("\nDigite 1 para espiar la Memoria, 2 para espiar los procesos o 3 para salir. \n");
         int eleccion;
-        scanf("%d", &eleccion);        
+        scanf("%d", &eleccion);
 
         switch (eleccion)
         {
@@ -110,16 +120,14 @@ int main(int argc, char const *argv[])
 
         case 3:
             printf("\nSaliendo\n\n");
-            //pidBlock[0] = -1; 
+            //pidBlock[0] = -1;
             return 0;
 
-        break;
-        
+            break;
+
         default:
             printf("\nEl valor digitado es invalido\n");
             break;
-
         }
     }
 }
-
